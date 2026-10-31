@@ -65,9 +65,11 @@ def update(window):
         # Using a Canvas, it's like a third buffer that we use to store every pixel
         # the user drew on the window
 
-        for i in range(HEIGHT):
-            canva_manipulation.set_pixel(i, i, WIDTH, HEIGHT, SELECTED_COLOR, CANVAS)
-
+        # canva_manipulation.draw_bresenham_line(10,10, 200,30, WIDTH, HEIGHT, SELECTED_COLOR, CANVAS)
+        # canva_manipulation.draw_rectangle_hollow(20,20, 100,200, WIDTH, HEIGHT, SELECTED_COLOR, CANVAS)
+        # canva_manipulation.draw_rectangle_filled(300,0, 400,50, WIDTH, HEIGHT, SELECTED_COLOR, CANVAS)
+        canva_manipulation.draw_circle_hollow(250,250, 20, WIDTH, HEIGHT, SELECTED_COLOR, CANVAS)
+        canva_manipulation.draw_circle_filled(400,400, 50, WIDTH, HEIGHT, SELECTED_COLOR, CANVAS)
         glRasterPos2f(-1, -1)
         glDrawPixels(WIDTH, HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, CANVAS)
         # Swap
