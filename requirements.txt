@@ -1,3 +1,4 @@
 glfw==2.10.2
 numpy==2.5.4
 PyOpenGL==3.1.10
+ipykernel==7.4.0
