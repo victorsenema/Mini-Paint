@@ -7,7 +7,6 @@ import numpy as np
 # • Gerenciar interação do usuário (mouse/teclado) para desenho em tempo real; 
 
 #  Ferramentas essenciais: 
-# Paleta de cores com pelo menos 8 cores pré-definidas (preto, branco, vermelho, verde, azul, amarelo, ciano, magenta). 
 #  Seleção de espessura do pincel/ferramentas (3 opções: fino, médio, grosso). 
 #  Botão "Novo" (limpar CANVAS com cor de fundo).  
 #  Botão "Salvar" (exportar para um formato simples, como BMP, PPM ou PNG via biblioteca). 
@@ -59,11 +58,11 @@ def dda():
     return 1
 
 def draw_rectangle_hollow(x1, y1, x2, y2, WIDTH, HEIGHT, COLOR, CANVAS):
-    for x in range(x1,x2):
+    for x in range(x1,x2+1):
         set_pixel_color(x, y1, WIDTH, HEIGHT, COLOR, CANVAS)
         set_pixel_color(x, y2, WIDTH, HEIGHT, COLOR, CANVAS)
 
-    for y in range(y1,y2):
+    for y in range(y1,y2+1):
         set_pixel_color(x1, y, WIDTH, HEIGHT, COLOR, CANVAS)
         set_pixel_color(x2, y, WIDTH, HEIGHT, COLOR, CANVAS)
 
@@ -181,19 +180,27 @@ def flood_fill_bucket_neighbor_4(start_x, start_y, WIDTH, HEIGHT, COLOR, CANVAS)
 
     target_color = get_pixel(start_x, start_y, WIDTH, HEIGHT, CANVAS)
 
-    queue.append([start_x, start_y])
+    same_color = np.all(CANVAS[:HEIGHT, :WIDTH] == target_color, axis=2).tolist()
+
+    queue.append((start_x, start_y))
     visited.add((start_x, start_y))
+
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 
     while queue:
         current_x, current_y = queue.popleft()
-        set_pixel_color(current_x, current_y, WIDTH, HEIGHT, COLOR, CANVAS)
-        neighbors = get_neighbors_4( current_x, current_y, target_color, WIDTH, HEIGHT, CANVAS)
 
-        for neighbor in neighbors:
-            neighbor = tuple(neighbor)
+        for dx, dy in directions:
+            new_x = current_x + dx
+            new_y = current_y + dy
+            neighbor = (new_x, new_y)
 
-            if neighbor not in visited:
+            if 0 <= new_x < WIDTH and 0 <= new_y < HEIGHT and same_color[new_y][new_x] and neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
+
+    # pinta tudo de uma vez no final
+    xs, ys = zip(*visited)
+    CANVAS[list(ys), list(xs)] = COLOR
 
     return visited
