@@ -290,7 +290,7 @@ def draw_circle_hollow(WIDTH, HEIGHT, CANVAS, background=BUTTOM_BACKGROUND):
     draw_icon(BACKGROUND_ICON, x1, y2, WIDTH, HEIGHT, CANVAS, background)
     center_x = (x1 + x2) // 2
     center_y = (y1 + y2) // 2
-    radius = BUTTON_SIZE // 2 - 1                                  # 6
+    radius = BUTTON_SIZE // 2 - 1
     primitives.draw_circle_hollow(center_x, center_y, radius, WIDTH, HEIGHT, ICON_COLOR, CANVAS)
     draw_button_border(x1, y1, x2, y2, WIDTH, HEIGHT, CANVAS)
 
@@ -299,7 +299,7 @@ def draw_circle_filled(WIDTH, HEIGHT, CANVAS, background=BUTTOM_BACKGROUND):
     draw_icon(BACKGROUND_ICON, x1, y2, WIDTH, HEIGHT, CANVAS, background)
     center_x = (x1 + x2) // 2
     center_y = (y1 + y2) // 2
-    radius = BUTTON_SIZE // 2 - 1                                  # 6
+    radius = BUTTON_SIZE // 2 - 1
     primitives.draw_circle_filled(center_x, center_y, radius, WIDTH, HEIGHT, ICON_COLOR, CANVAS)
     draw_button_border(x1, y1, x2, y2, WIDTH, HEIGHT, CANVAS)
 
@@ -312,7 +312,6 @@ def draw_rectangle_hollow(WIDTH, HEIGHT, CANVAS, background=BUTTOM_BACKGROUND):
 def draw_rectangle_filled(WIDTH, HEIGHT, CANVAS, background=BUTTOM_BACKGROUND):
     x1, y1, x2, y2 = get_button_rect("RECTANGLE_FILLED", HEIGHT)
     draw_icon(BACKGROUND_ICON, x1, y2, WIDTH, HEIGHT, CANVAS, background)
-    # o draw_rectangle_filled não pinta x2/y2 (range exclui o último), então x2 e y2 do botão servem de limite
     primitives.draw_rectangle_filled(x1 + 1, y1 + 1, x2, y2, WIDTH, HEIGHT, ICON_COLOR, CANVAS)
     draw_button_border(x1, y1, x2, y2, WIDTH, HEIGHT, CANVAS)
 
