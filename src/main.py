@@ -15,7 +15,6 @@ CANVAS = np.full((HEIGHT, WIDTH, 3), 255, dtype=np.uint8)
 DRAW_HEIGHT = HEIGHT - menu.get_menu_height()  
 
 #COLORS
-#COLORS
 COLOR_PALETTE = {
                 "BLACK":    [80, 80, 80],
                 "WHITE":    [255, 255, 255],
@@ -33,10 +32,23 @@ SELECTED_TOOL = "PEN"
 
 # BRUSH
 SELECTED_BRUSH = "SMALL"
+BRUSH_MASKS = {
+    "SMALL":  [[1]],
 
-# Como cada ferramenta usa o mouse
+    "MEDIUM": [[0,1,0],
+               [1,1,1],
+               [0,1,0]],
+
+    "BIG":    [[0,1,1,1,0],
+               [1,1,1,1,1],
+               [1,1,1,1,1],
+               [1,1,1,1,1],
+               [0,1,1,1,0]],
+}
+
+# How each tool uses the tool
 DRAG_TOOLS = ["PEN", "ERASER", "LINE_BRESEHAM", "RECTANGLE_HOLLOW", "RECTANGLE_FILLED", "CIRCLE_HOLLOW", "CIRCLE_FILLED"]
-CLICK_TOOLS = {"CURVE": 4, "BUCKET": 1, "COLOR_PICKER": 1}      # ferramenta -> quantos cliques precisa
+CLICK_TOOLS = {"CURVE": 4, "BUCKET": 1, "COLOR_PICKER": 1} #clicks needed
 
 #MOUSE
 LAST_MOUSE_COORDINATE = None
@@ -119,7 +131,7 @@ def update(window):
 
         x, y, pressed = mouse.get_mouse_state(HEIGHT, window)
 
-        # barra de menu: só o instante do clique conta
+        # MENU BAR onlyu clicks
         if pressed and not was_pressed and y >= DRAW_HEIGHT:
             ignore_until_release = True
             if select_from_menu(x, y, button_areas, color_areas, brush_areas):
@@ -132,13 +144,13 @@ def update(window):
         was_pressed = pressed
 
         drawing = pressed and not ignore_until_release
+        mask = BRUSH_MASKS[SELECTED_BRUSH]
 
-        # área de desenho
         if SELECTED_TOOL == "PEN":
-            last_point = tool.pencil(x, y, drawing, last_point, WIDTH, DRAW_HEIGHT, SELECTED_COLOR, CANVAS)
+            last_point = tool.pencil(x, y, drawing, last_point, WIDTH, DRAW_HEIGHT, SELECTED_COLOR, CANVAS, mask)
 
         elif SELECTED_TOOL == "ERASER":
-            last_point = tool.erase(x, y, drawing, last_point, WIDTH, DRAW_HEIGHT, CANVAS)
+            last_point = tool.erase(x, y, drawing, last_point, WIDTH, DRAW_HEIGHT, CANVAS, mask)
 
         elif SELECTED_TOOL in tool.SHAPES:
             start = drag_start
@@ -148,16 +160,19 @@ def update(window):
                 snapshot = CANVAS.copy()
             if phase is not None:
                 CANVAS[:] = snapshot
-                tool.draw_shape(SELECTED_TOOL, start, (x, y), phase != "END", WIDTH, DRAW_HEIGHT, SELECTED_COLOR, CANVAS)
+                tool.draw_shape(SELECTED_TOOL, start, (x, y), phase != "END", WIDTH, DRAW_HEIGHT, SELECTED_COLOR, CANVAS, mask)
 
         elif SELECTED_TOOL in CLICK_TOOLS:
-            click_points, done = mouse.click(x, y, drawing, was_drawing, click_points, 1)
+            click_points, done = mouse.click(x, y, drawing, was_drawing, click_points, CLICK_TOOLS[SELECTED_TOOL])
             if done:
                 click_x, click_y = click_points[0]
                 if SELECTED_TOOL == "BUCKET":
                     tool.bucket(click_x, click_y, WIDTH, DRAW_HEIGHT, SELECTED_COLOR, CANVAS)
                 elif SELECTED_TOOL == "COLOR_PICKER":
                     SELECTED_COLOR = tool.color_picker(click_x, click_y, WIDTH, DRAW_HEIGHT, CANVAS)
+                elif SELECTED_TOOL == "CURVE":
+                    p1, p2, p3, p4 = click_points
+                    primitives.draw_bezier_curve(p1, p2, p3, p4, WIDTH, DRAW_HEIGHT, SELECTED_COLOR, CANVAS, mask)
                 click_points = []
 
         was_drawing = drawing

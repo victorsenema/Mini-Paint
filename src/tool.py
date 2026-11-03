@@ -7,47 +7,44 @@ from tkinter import Tk, filedialog
 import primitives
 import mouse
 
-def pencil(x, y, pressed, last_point, WIDTH, HEIGHT, COLOR, CANVAS):
+def pencil(x, y, pressed, last_point, WIDTH, HEIGHT, COLOR, CANVAS, MASK=[[1]]):
     if not pressed:
         return None
 
     if last_point is None:
-        primitives.set_pixel_color(x, y, WIDTH, HEIGHT, COLOR, CANVAS)
+        primitives.stamp(x, y, MASK, WIDTH, HEIGHT, COLOR, CANVAS)
     else:
-        primitives.draw_bresenham_line(last_point[0], last_point[1], x, y, WIDTH, HEIGHT, COLOR, CANVAS)
+        primitives.draw_bresenham_line(last_point[0], last_point[1], x, y, WIDTH, HEIGHT, COLOR, CANVAS, MASK)
 
     return (x, y)
 
-def erase(x, y, pressed, last_point, WIDTH, HEIGHT, CANVAS):
-    return pencil(x, y, pressed, last_point, WIDTH, HEIGHT, [255,255,255], CANVAS)
+def erase(x, y, pressed, last_point, WIDTH, HEIGHT, CANVAS, MASK=[[1]]):
+    return pencil(x, y, pressed, last_point, WIDTH, HEIGHT, [255,255,255], CANVAS, MASK)
 
 
-# FORMAS (arrasto): start = onde apertou, end = onde está o mouse
-def line(start, end, WIDTH, HEIGHT, COLOR, CANVAS):
-    primitives.draw_bresenham_line(start[0], start[1], end[0], end[1], WIDTH, HEIGHT, COLOR, CANVAS)
+def line(start, end, WIDTH, HEIGHT, COLOR, CANVAS, MASK=[[1]]):
+    primitives.draw_bresenham_line(start[0], start[1], end[0], end[1], WIDTH, HEIGHT, COLOR, CANVAS, MASK)
 
 def get_corners(start, end):
-    # os retângulos das primitivas esperam x1 <= x2 e y1 <= y2, qualquer direção de arrasto serve
     x1, x2 = sorted((start[0], end[0]))
     y1, y2 = sorted((start[1], end[1]))
     return x1, y1, x2, y2
 
-def rectangle_hollow(start, end, WIDTH, HEIGHT, COLOR, CANVAS):
+def rectangle_hollow(start, end, WIDTH, HEIGHT, COLOR, CANVAS, MASK=[[1]]):
     x1, y1, x2, y2 = get_corners(start, end)
-    primitives.draw_rectangle_hollow(x1, y1, x2, y2, WIDTH, HEIGHT, COLOR, CANVAS)
+    primitives.draw_rectangle_hollow(x1, y1, x2, y2, WIDTH, HEIGHT, COLOR, CANVAS, MASK)
 
-def rectangle_filled(start, end, WIDTH, HEIGHT, COLOR, CANVAS):
+def rectangle_filled(start, end, WIDTH, HEIGHT, COLOR, CANVAS, MASK=[[1]]):
     x1, y1, x2, y2 = get_corners(start, end)
-    # o draw_rectangle_filled não pinta x2 e y2, por isso o + 1
     primitives.draw_rectangle_filled(x1, y1, x2 + 1, y2 + 1, WIDTH, HEIGHT, COLOR, CANVAS)
 
 def get_radius(center, edge):
     return int(round(math.hypot(edge[0] - center[0], edge[1] - center[1])))
 
-def circle_hollow(center, edge, WIDTH, HEIGHT, COLOR, CANVAS):
-    primitives.draw_circle_hollow(center[0], center[1], get_radius(center, edge), WIDTH, HEIGHT, COLOR, CANVAS)
+def circle_hollow(center, edge, WIDTH, HEIGHT, COLOR, CANVAS, MASK=[[1]]):
+    primitives.draw_circle_hollow(center[0], center[1], get_radius(center, edge), WIDTH, HEIGHT, COLOR, CANVAS, MASK)
 
-def circle_filled(center, edge, WIDTH, HEIGHT, COLOR, CANVAS):
+def circle_filled(center, edge, WIDTH, HEIGHT, COLOR, CANVAS, MASK=[[1]]):
     primitives.draw_circle_filled(center[0], center[1], get_radius(center, edge), WIDTH, HEIGHT, COLOR, CANVAS)
 
 SHAPES = {
@@ -58,13 +55,14 @@ SHAPES = {
     "CIRCLE_FILLED":    circle_filled,
 }
 
-def draw_shape(name, start, end, preview, WIDTH, HEIGHT, COLOR, CANVAS):
-    # durante o arrasto as figuras cheias mostram só o contorno (preencher a cada frame é lento)
+def draw_shape(name, start, end, preview, WIDTH, HEIGHT, COLOR, CANVAS, MASK=[[1]]):
     if preview and name == "RECTANGLE_FILLED":
         name = "RECTANGLE_HOLLOW"
+        MASK = [[1]]
     if preview and name == "CIRCLE_FILLED":
         name = "CIRCLE_HOLLOW"
-    SHAPES[name](start, end, WIDTH, HEIGHT, COLOR, CANVAS)
+        MASK = [[1]]
+    SHAPES[name](start, end, WIDTH, HEIGHT, COLOR, CANVAS, MASK)
 
 
 # FERRAMENTAS DE UM CLIQUE
