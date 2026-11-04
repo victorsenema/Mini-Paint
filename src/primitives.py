@@ -169,58 +169,58 @@ def get_neighbors_4(x, y, target_color, WIDTH, HEIGHT, CANVAS):
 
     return neighbors_4
 
-def flood_fill_bucket_neighbor_8(start_x, start_y, WIDTH, HEIGHT, COLOR, CANVAS):
-    queue = deque()
-    visited = set()
-
-    target_color = get_pixel(start_x, start_y, WIDTH, HEIGHT, CANVAS)
-
-    queue.append([start_x, start_y])
-    visited.add((start_x, start_y))
-
-    while queue:
-        current_x, current_y = queue.popleft()
-        set_pixel_color(current_x, current_y, WIDTH, HEIGHT, COLOR, CANVAS)
-        neighbors = get_neighbors_8( current_x, current_y, target_color, WIDTH, HEIGHT, CANVAS)
-
-        for neighbor in neighbors:
-            neighbor = tuple(neighbor)
-
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
-
-    return visited
-
-# def flood_fill_bucket_neighbor_4(start_x, start_y, WIDTH, HEIGHT, COLOR, CANVAS):
+# def flood_fill_bucket_neighbor_8(start_x, start_y, WIDTH, HEIGHT, COLOR, CANVAS):
 #     queue = deque()
 #     visited = set()
 
 #     target_color = get_pixel(start_x, start_y, WIDTH, HEIGHT, CANVAS)
 
-#     same_color = np.all(CANVAS[:HEIGHT, :WIDTH] == target_color, axis=2).tolist()
-
-#     queue.append((start_x, start_y))
+#     queue.append([start_x, start_y])
 #     visited.add((start_x, start_y))
-
-#     directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 
 #     while queue:
 #         current_x, current_y = queue.popleft()
+#         set_pixel_color(current_x, current_y, WIDTH, HEIGHT, COLOR, CANVAS)
+#         neighbors = get_neighbors_8( current_x, current_y, target_color, WIDTH, HEIGHT, CANVAS)
 
-#         for dx, dy in directions:
-#             new_x = current_x + dx
-#             new_y = current_y + dy
-#             neighbor = (new_x, new_y)
+#         for neighbor in neighbors:
+#             neighbor = tuple(neighbor)
 
-#             if 0 <= new_x < WIDTH and 0 <= new_y < HEIGHT and same_color[new_y][new_x] and neighbor not in visited:
+#             if neighbor not in visited:
 #                 visited.add(neighbor)
 #                 queue.append(neighbor)
 
-#     xs, ys = zip(*visited)
-#     CANVAS[list(ys), list(xs)] = COLOR
-
 #     return visited
+
+def flood_fill_bucket_neighbor_4(start_x, start_y, WIDTH, HEIGHT, COLOR, CANVAS):
+    queue = deque()
+    visited = set()
+
+    target_color = get_pixel(start_x, start_y, WIDTH, HEIGHT, CANVAS)
+
+    same_color = np.all(CANVAS[:HEIGHT, :WIDTH] == target_color, axis=2).tolist()
+
+    queue.append((start_x, start_y))
+    visited.add((start_x, start_y))
+
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+
+    while queue:
+        current_x, current_y = queue.popleft()
+
+        for dx, dy in directions:
+            new_x = current_x + dx
+            new_y = current_y + dy
+            neighbor = (new_x, new_y)
+
+            if 0 <= new_x < WIDTH and 0 <= new_y < HEIGHT and same_color[new_y][new_x] and neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+    xs, ys = zip(*visited)
+    CANVAS[list(ys), list(xs)] = COLOR
+
+    return visited
 
 def get_neighbors_4(x, y, target_color, WIDTH, HEIGHT, CANVAS):
     neighbors_4 = []
@@ -243,25 +243,25 @@ def get_neighbors_4(x, y, target_color, WIDTH, HEIGHT, CANVAS):
 
 
 #NOT OTPTIMZED BUCKET N 4
-def flood_fill_bucket_neighbor_4(start_x, start_y, WIDTH, HEIGHT, COLOR, CANVAS):
-    queue = deque()
-    visited = set()
+# def flood_fill_bucket_neighbor_4(start_x, start_y, WIDTH, HEIGHT, COLOR, CANVAS):
+#     queue = deque()
+#     visited = set()
 
-    target_color = get_pixel(start_x, start_y, WIDTH, HEIGHT, CANVAS)
+#     target_color = get_pixel(start_x, start_y, WIDTH, HEIGHT, CANVAS)
 
-    queue.append([start_x, start_y])
-    visited.add((start_x, start_y))
+#     queue.append([start_x, start_y])
+#     visited.add((start_x, start_y))
 
-    while queue:
-        current_x, current_y = queue.popleft()
-        set_pixel_color(current_x, current_y, WIDTH, HEIGHT, COLOR, CANVAS)
-        neighbors = get_neighbors_4( current_x, current_y, target_color, WIDTH, HEIGHT, CANVAS)
+#     while queue:
+#         current_x, current_y = queue.popleft()
+#         set_pixel_color(current_x, current_y, WIDTH, HEIGHT, COLOR, CANVAS)
+#         neighbors = get_neighbors_4( current_x, current_y, target_color, WIDTH, HEIGHT, CANVAS)
 
-        for neighbor in neighbors:
-            neighbor = tuple(neighbor)
+#         for neighbor in neighbors:
+#             neighbor = tuple(neighbor)
 
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
+#             if neighbor not in visited:
+#                 visited.add(neighbor)
+#                 queue.append(neighbor)
 
-    return visited
+#     return visited
